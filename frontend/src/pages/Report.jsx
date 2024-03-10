@@ -1,10 +1,11 @@
 import React from 'react' 
 import { VerticalNavbar } from '../components'
 
-const Report = () => {
+const Report = ({username, id}) => {
+  console.log("in report page", id);
   return (
     <div>
-        <VerticalNavbar /> 
+        <VerticalNavbar username={username}/> 
         <h1>Report</h1>
     </div>
   )

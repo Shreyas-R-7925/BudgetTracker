@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import {Home, Report, Settings} from './pages';
+import { Home, Report, Settings } from './pages';
+import { Login } from './components'; // Import the Login component
 import { budget } from './assets';
 
+import axios from 'axios';
+
 const App = () => {
+
+  const [id, setId] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [login, setLogin] = useState(false);
+
   const [authenticated, setAuthenticated] = useState(false);
-  const [signingUp, setSigningUp] = useState(false);
+  const [signingUp, setSigningUp] = useState(false); 
+
+  const [error, setError] = useState('');  // not required check once
+
 
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('authenticated');
@@ -17,6 +25,17 @@ const App = () => {
       setAuthenticated(true);
     }
   }, []);
+
+  const [data, setData] = useState([]); 
+ 
+  const loadData = async () => {
+      const response = await axios.get("http://localhost:8080/user");
+      setData(response.data); 
+  } 
+
+  useEffect(() => {
+      loadData(); 
+  }, []); 
 
   useEffect(() => {
     if (authenticated) {
@@ -42,12 +61,64 @@ const App = () => {
     setSigningUp(true);
   };
 
-  const handleLogin = (e) => {
+  
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    // Here you would perform actual authentication, for simplicity let's use a hardcoded check
-    if (username === 's123' && password === '12345') {
-      setAuthenticated(true);
+    try {
+      const response = await axios.post("http://localhost:8080/user", {
+        username: username,
+        email: email,
+        password: password
+      });
+      if (response.status === 201) {
+        console.log("Sign-up successful");
+        setEmail(email);
+        setUsername(username);
+        setId(id);
+        setAuthenticated(true);
+      }
+    } catch (error) {
+      console.error("Error signing up:", error);
+      setError("Error signing up. Please try again.");
     }
+  };
+
+  
+
+  const handleLogin = async (e) => {
+      e.preventDefault();
+      
+      try {
+          const response = await axios.get("http://localhost:8080/user");
+          const users = response.data;
+          
+          // Find user by username
+          const user = users.find(user => user.username === username);
+
+          if (!user) {
+              setError('User not found');
+              console.log('User not found');
+              return;
+          }
+
+          if (user.password === password) {
+            // Authentication successful
+            console.log('Authentication successful');
+            setId(user.id)
+            setEmail(user.email)
+            console.log('User email:', user.email); // Log user's email
+            console.log('User id:', user.id); 
+            setAuthenticated(true);
+          } 
+          else {
+            setError('Invalid password');
+            console.log("Invalid password");
+          }
+      } 
+      catch (error) {
+          console.error('Error fetching user data:', error);
+          setError('Error fetching user data');
+      }
   };
 
   const handleLogout = () => {
@@ -56,62 +127,25 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="flex h-screen">
+      <div>
         {!authenticated && (
-          <div className="w-1/2 bg-gray-200">
-            <img src={budget} alt="Your Image" className="object-cover h-full w-full" />
+          <div className='flex flex-col items-center justify-center'>
+            <img src={budget} alt="Your Image" className="max-w-xl rounded-lg" />
           </div>
         )}
-        <div className="w-1/2 flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
           {!authenticated && !signingUp && (
-            <div className="max-w-md w-full">
-              <h2 className="text-3xl font-bold mb-4">Login</h2>
-              <form onSubmit={handleLogin}>
-                <div className="mb-4">
-                  <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    onChange={handleUsernameChange}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="password" className="block text-gray-700 font-bold mb-2">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    onChange={handlePasswordChange}
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Log In
-                </button>
-
-                <button
-                  onClick={signup}
-                  type="button"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Sign Up
-                </button>
-              </form>
-            </div>
+            <Login
+              handleLogin={handleLogin}
+              handleUsernameChange={handleUsernameChange}
+              handlePasswordChange={handlePasswordChange}
+              signup={signup}
+            />
           )}
           {!authenticated && signingUp && (
             <div className="max-w-md w-full">
               <h2 className="text-3xl font-bold mb-4">Sign Up</h2>
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleSignUp}>
                 <div className="mb-4">
                   <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
                     Username
@@ -162,9 +196,9 @@ const App = () => {
               <button className="absolute top-0 right-0 h-16 w-16 bg-yellow-200" onClick={handleLogout}>Logout</button>
               <main className="sm:p-8 px-4 py-8 w-full min-h-[calc(100vh-73px)]">
                 <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/report" element={<Report />} />
-                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/" element={<Home username={username} email={email} id = {id}/>} />
+                  <Route path="/report" element={<Report username={username} id={id}/>} />
+                  <Route path="/settings" element={<Settings username={username} id={id}/>} />
                 </Routes>
               </main>
             </div>

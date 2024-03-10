@@ -1,10 +1,11 @@
 import React from 'react' 
 import { VerticalNavbar } from '../components'
 
-const Settings = () => {
+const Settings = ({username, id}) => {
+  console.log("in settings page",id);
   return (
     <div>Settings
-        <VerticalNavbar />  
+        <VerticalNavbar username={username}/>  
     </div>
   )
 }

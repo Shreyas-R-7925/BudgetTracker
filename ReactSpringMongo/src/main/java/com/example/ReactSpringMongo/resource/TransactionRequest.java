@@ -1,5 +1,7 @@
 package com.example.ReactSpringMongo.resource;
 
+import java.util.Date;
+
 public class TransactionRequest {
 
     private String userId;
@@ -10,14 +12,17 @@ public class TransactionRequest {
 
     private String description;
 
+    private String date;
+
     public TransactionRequest() {
     }
 
-    public TransactionRequest(String userId, String categoryId, double amount, String description) {
+    public TransactionRequest(String userId, String categoryId, double amount, String description, String date) {
         this.userId = userId;
         this.categoryId = categoryId;
         this.amount = amount;
         this.description = description;
+        this.date = date;
     }
 
     public String getUserId() {
@@ -50,5 +55,14 @@ public class TransactionRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date){
+        this.date = date;
     }
 }

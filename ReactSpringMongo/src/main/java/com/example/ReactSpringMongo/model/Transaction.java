@@ -3,6 +3,8 @@ package com.example.ReactSpringMongo.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 @Document("transactions")
 public class Transaction {
 
@@ -17,15 +19,18 @@ public class Transaction {
 
     private String description;
 
+    private Date date;
+
 
     public Transaction() {
     }
 
-    public Transaction(String userId, String categoryId, double amount, String description) {
+    public Transaction(String userId, String categoryId, double amount, String description, Date date) {
         this.userId = userId;
         this.categoryId = categoryId;
         this.amount = amount;
         this.description = description;
+        this.date = date;
     }
 
     public String getId() {
@@ -67,4 +72,13 @@ public class Transaction {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
 }
