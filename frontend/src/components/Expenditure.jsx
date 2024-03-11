@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const Expenditure = ({ id }) => {
-    console.log("user id in expenditure",id);
+const Expenditure = ({ id, editingTransaction }) => {
   const [formData, setFormData] = useState({
     userId: id,
     categoryId: '',
@@ -11,29 +10,45 @@ const Expenditure = ({ id }) => {
     date: ''
   });
 
+  // Update formData whenever editingTransaction changes
+  useEffect(() => {
+    if (editingTransaction) {
+      setFormData({
+        userId: id,
+        categoryId: editingTransaction.categoryId,
+        amount: editingTransaction.amount,
+        description: editingTransaction.description,
+        date: editingTransaction.date
+      });
+    } else {
+      // Reset form data when editingTransaction is null (no transaction selected)
+      setFormData({
+        userId: id,
+        categoryId: '',
+        amount: '',
+        description: '',
+        date: ''
+      });
+    }
+  }, [editingTransaction, id]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-  let formattedDate = value; // Default value
-
-//   if (name === 'date') {
-//     // Split the input date string by '-'
-//     const parts = value.split('-');
-    
-//     // Construct the date string in the format 'yyyy-mm-dd'
-//     if (parts.length === 3) {
-//       formattedDate = `${parts[1]}-${parts[2]}`;
-//     }
-//   }
-
-  setFormData({ ...formData, [name]: formattedDate });
+    setFormData({ ...formData, [name]: value });
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/transactions', formData);
-      console.log('Transaction added successfully');
+      if (editingTransaction) {
+        // If editingTransaction exists, update the transaction
+        await axios.put(`http://localhost:8080/transactions/${editingTransaction.id}`, formData);
+        console.log('Transaction updated successfully');
+      } else {
+        // Otherwise, add a new transaction
+        await axios.post('http://localhost:8080/transactions', formData);
+        console.log('Transaction added successfully');
+      }
       // Reset form data after successful submission
       setFormData({
         userId: id,
@@ -43,7 +58,7 @@ const Expenditure = ({ id }) => {
         date: ''
       });
     } catch (error) {
-      console.error('Error adding transaction:', error);
+      console.error('Error submitting transaction:', error);
     }
   };
 
@@ -95,19 +110,19 @@ const Expenditure = ({ id }) => {
           Date
         </label>
         <input
-  type="text"
-  id="date"
-  name="date"
-  value={formData.date}
-  onChange={handleChange}
-  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-/>
+          type="text"
+          id="date"
+          name="date"
+          value={formData.date}
+          onChange={handleChange}
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
 
         <button
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
-          Submit
+          {editingTransaction ? 'Update' : 'Submit'}
         </button>
       </form>
     </div>

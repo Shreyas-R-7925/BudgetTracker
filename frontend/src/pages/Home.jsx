@@ -10,6 +10,7 @@ const Home = ({ username, email, id }) => {
 
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [editingTransaction, setEditingTransaction] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,22 +38,39 @@ const Home = ({ username, email, id }) => {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
-  };
-  
+  }; 
+
+  const delTransaction = async (transactionId) => {
+    try {
+      await axios.delete(`http://localhost:8080/transactions/${transactionId}`);
+      setTransactions(transactions.filter(transaction => transaction.id !== transactionId));
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+    }
+  };  
+
+  const editTransaction = (transactionId) => {
+    // Find the transaction being edited
+    const transactionToEdit = transactions.find(transaction => transaction.id === transactionId);
+    // Set the editingTransaction state to the found transaction
+    setEditingTransaction(transactionToEdit);
+  }
 
   return (
     <div className="flex">
       <VerticalNavbar username={username} />
       <div className="py-4 flex flex-col"> {/* Adjust the margin-left to accommodate navbar width */}
-        <div className="ml-32 flex flex-wrap">
-          <Boxes color="cyan" comment="BALANCE" image={cash} />
-          <Boxes color="green" comment="RENT" image={bill} />
-          <Boxes color="orange" comment="SHOPPING" image={shopping} />
-          <Boxes color="black" comment="FOOD" image={food} />
-          <Boxes color="brown" comment="OTHERS" image={leaf} />
+        <div className="ml-36 flex flex-wrap">
+          {/* <Boxes color="cyan" comment="Expenses" image={cash} /> */}
+          <Boxes color="green" comment="Food" image={food} />
+          <Boxes color="orange" comment="Health" image={bill} />
+          <Boxes color="black" comment="Shopping" image={bill} />
+          <Boxes color="orange" comment="Bills" image={shopping} />
+          <Boxes color="black" comment="Entertainment" image={food} />
+          <Boxes color="brown" comment="Others" image={leaf} />
         </div>
         <div className="mt-8 flex">
-          <div className='ml-32'>
+          <div className='ml-36'>
             <h2 className="text-xl font-bold">Recent Transactions</h2>
             <table>
               <thead>
@@ -67,19 +85,19 @@ const Home = ({ username, email, id }) => {
 
               <tbody>
                 {transactions.map((transaction) => {
-                  const category = categories.find((cat) => cat.id === transaction.categoryId);
+                  // const category = categories.find((cat) => cat.id === transaction.categoryId);
                   return (
                     <tr key={transaction.id}>
                       <td className="text-black text-lg px-6 py-3">{transaction.description}</td>
-                      <td className="text-black text-lg px-6 py-3">{category ? category.categoryName : 'Others'}</td>
+                      <td className="text-black text-lg px-6 py-3">{transaction.categoryId}</td>
                       <td className="text-black text-lg px-6 py-3">{transaction.amount}</td>
                       <td className="text-black py-3">{formatDate(transaction.date)}</td>
                       <td className='text-black py-3'>
                             {/* <Link to={`/update-faculty/${item.faculty_id}`}> */}
-                            <button className="font-inter font-bold bg-green-300 text-black px-4 py-2 rounded-md">Edit</button>
+                            <button onClick={() => editTransaction(transaction.id)} className="font-inter font-bold bg-green-300 text-black px-4 py-2 rounded-md">Edit</button>
                             &nbsp; 
                             {/* </Link>  */}
-                            <button className="font-inter font-bold bg-red-500 text-black px-4 py-2 rounded-md" >Del</button> 
+                            <button onClick={() => delTransaction(transaction.id)} className="font-inter font-bold bg-red-500 text-black px-4 py-2 rounded-md" >Del</button> 
                         </td>
                     </tr>
                   );
@@ -89,7 +107,8 @@ const Home = ({ username, email, id }) => {
             </table>
           </div>
           <div className='ml-10 justify-center items-center'>
-          <Expenditure id={id}/>
+            {/* Pass the editingTransaction to the Expenditure component */}
+            <Expenditure id={id} editingTransaction={editingTransaction} />
           </div>
           
         </div>

@@ -60,4 +60,27 @@ public class TransactionController {
         }
     }
 
+    @PutMapping("/transactions/{id}")
+    public ResponseEntity<Transaction> updateTransaction(@PathVariable String id, @RequestBody TransactionRequest transactionRequest){
+        Optional<Transaction> optionalTransaction = this.transactionRepository.findById(id);
+        if (optionalTransaction.isPresent()) {
+            Transaction transaction = optionalTransaction.get();
+            transaction.setUserId(transactionRequest.getUserId());
+            transaction.setCategoryId(transactionRequest.getCategoryId());
+            transaction.setAmount(transactionRequest.getAmount());
+            transaction.setDescription(transactionRequest.getDescription());
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                Date date = formatter.parse(transactionRequest.getDate());
+                transaction.setDate(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return ResponseEntity.badRequest().build();
+            }
+            return ResponseEntity.ok(this.transactionRepository.save(transaction));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

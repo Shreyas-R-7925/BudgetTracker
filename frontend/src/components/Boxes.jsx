@@ -18,7 +18,8 @@ const Boxes = ({ color, comment, image }) => {
       width: '350px', // Add width of 500px
       height: '180px', // Adjust height as needed
       fontSize: '24px', // Adjust font size as needed
-      textAlign: 'center' // Center align text
+      textAlign: 'center',
+      marginTop: '20px' // Center align text
       // Add any other special properties for blue color
     };
   }
