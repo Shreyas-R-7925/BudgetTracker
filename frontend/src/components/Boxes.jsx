@@ -1,10 +1,10 @@
 import React from 'react';
 
-const Boxes = ({ color, comment, image }) => { 
+const Boxes = ({ color, comment, amount, image }) => { 
  
   let boxStyle = {
     backgroundColor: color,
-    width: '150px',
+    width: '158px',
     height: '100px',
     display: 'inline-block', // Display boxes inline
     marginRight: '10px', // Add margin between boxes
@@ -25,9 +25,16 @@ const Boxes = ({ color, comment, image }) => {
   }
 
   return (
-    <div className="rounded-lg" style={boxStyle}>
-      {comment}
-      <img src={image} className='w-10 h-10'></img>
+    <div className="rounded-lg flex px-1 py-1" style={boxStyle}>
+      <div className='font-bold text-lg flex justify-center items-center'>
+        <h1 className='text-neutral-950 text-lg'> {comment.toUpperCase()} </h1>
+      </div>  
+      <div className='flex flex-row mt-4'>
+        <img src={image} className='w-10 h-10'></img>
+        &nbsp;
+        &nbsp;
+        <h5 className='text-{3%}'> <span className='text-xl'>₹</span>{amount} </h5>
+      </div>
     </div>
   );
 };

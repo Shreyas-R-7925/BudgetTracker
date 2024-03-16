@@ -102,7 +102,9 @@ const Expenditure = ({ id, editingTransaction }) => {
         >
           <option value="food">Food</option>
           <option value="shopping">Shopping</option>
-          <option value="bills">Bills/Utilities</option>
+          <option value="bills">Bills</option>
+          <option value="health">Health</option> 
+          <option value="entertainment">Entertainment</option>
           <option value="others">Others</option>
         </select>
 

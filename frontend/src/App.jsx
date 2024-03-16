@@ -193,7 +193,7 @@ const App = () => {
           )}
           {authenticated && (
             <div>
-              <button className="absolute top-3 right-3 h-16 w-16 rounded-full bg-red-400 hover:bg-red-100 font-bold text-sm" onClick={handleLogout}>Logout</button>
+              <button className="absolute top-1 right-1 h-16 w-16 rounded-full bg-red-400 hover:bg-red-100 font-bold text-sm" onClick={handleLogout}>Logout</button>
               <main className="sm:p-8 px-4 py-8 w-full min-h-[calc(100vh-73px)]">
                 <Routes>
                   <Route path="/" element={<Home username={username} email={email} id = {id}/>} />

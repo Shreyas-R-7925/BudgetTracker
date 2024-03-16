@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Boxes, VerticalNavbar, Expenditure } from '../components';
-import { food, bill, cash, shopping, leaf } from '../assets';
+import { food, bill, cash, shopping, leaf, entertainment, doctor } from '../assets';
 import axios from 'axios';
 
 const Home = ({ username, email, id }) => {
@@ -9,6 +9,7 @@ const Home = ({ username, email, id }) => {
   console.log('in home page id: ', id);
 
   const [transactions, setTransactions] = useState([]);
+  const [amount, setAmount] = useState([]);
   const [categories, setCategories] = useState([]);
   const [editingTransaction, setEditingTransaction] = useState(null);
 
@@ -21,7 +22,6 @@ const Home = ({ username, email, id }) => {
         // Filter transactions and categories based on userId
         const filteredTransactions = transactionsResponse.data.filter(transaction => transaction.userId === id);
         const filteredCategories = categoriesResponse.data.filter(category => category.userId === id);
-
         setTransactions(filteredTransactions);
         setCategories(filteredCategories);
       } catch (error) {
@@ -31,6 +31,12 @@ const Home = ({ username, email, id }) => {
 
     fetchData();
   }, [id]); // Depend on id to refetch data when id changes
+
+  const calculateTotalExpenses = (category) => {
+    return transactions
+      .filter(transaction => transaction.categoryId === category)
+      .reduce((total, transaction) => total + transaction.amount, 0);
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -62,12 +68,12 @@ const Home = ({ username, email, id }) => {
       <div className="py-4 flex flex-col"> {/* Adjust the margin-left to accommodate navbar width */}
         <div className="ml-36 flex flex-wrap">
           {/* <Boxes color="cyan" comment="Expenses" image={cash} /> */}
-          <Boxes color="green" comment="Food" image={food} />
-          <Boxes color="orange" comment="Health" image={bill} />
-          <Boxes color="black" comment="Shopping" image={bill} />
-          <Boxes color="orange" comment="Bills" image={shopping} />
-          <Boxes color="black" comment="Entertainment" image={food} />
-          <Boxes color="brown" comment="Others" image={leaf} />
+          <Boxes color="#3b82f6" comment="Food" amount={calculateTotalExpenses("food")} image={food} />
+          <Boxes color="#67e8f9" comment="Health" amount = {calculateTotalExpenses("health")} image={doctor} />
+          <Boxes color="#3b82f6" comment="Shopping" amount ={calculateTotalExpenses("shopping")} image={shopping} />
+          <Boxes color="#67e8f9" comment="Bills" amount={calculateTotalExpenses("bills")} image={bill} />
+          <Boxes color="#3b82f6" comment="Entertainment" amount={calculateTotalExpenses("entertainment")} image={entertainment} />
+          <Boxes color="#67e8f9" comment="Others" amount={calculateTotalExpenses("others")} image={leaf} />
         </div>
         <div className="mt-8 flex">
           <div className='ml-36'>
