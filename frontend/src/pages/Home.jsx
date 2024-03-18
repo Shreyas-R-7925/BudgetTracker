@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Boxes, VerticalNavbar, Expenditure } from '../components';
-import { food, bill, cash, shopping, leaf, entertainment, doctor } from '../assets';
+import { food, bill, shopping, leaf, entertainment, doctor } from '../assets';
 import axios from 'axios';
 
 const Home = ({ username, email, id }) => {
@@ -65,42 +65,42 @@ const Home = ({ username, email, id }) => {
   return (
     <div className="flex">
       <VerticalNavbar username={username} />
-      <div className="py-4 flex flex-col"> {/* Adjust the margin-left to accommodate navbar width */}
+      <div className="py-4 flex flex-col"> 
+      <h1 className='ml-36 mb-4 font-bold font-mono text-2xl'>Transactions Overview</h1>
         <div className="ml-36 flex flex-wrap">
           {/* <Boxes color="cyan" comment="Expenses" image={cash} /> */}
-          <Boxes color="#3b82f6" comment="Food" amount={calculateTotalExpenses("food")} image={food} />
+          <Boxes color="#29b6f6" comment="Food" amount={calculateTotalExpenses("food")} image={food} />
           <Boxes color="#67e8f9" comment="Health" amount = {calculateTotalExpenses("health")} image={doctor} />
-          <Boxes color="#3b82f6" comment="Shopping" amount ={calculateTotalExpenses("shopping")} image={shopping} />
+          <Boxes color="#29b6f6" comment="Shopping" amount ={calculateTotalExpenses("shopping")} image={shopping} />
           <Boxes color="#67e8f9" comment="Bills" amount={calculateTotalExpenses("bills")} image={bill} />
-          <Boxes color="#3b82f6" comment="Entertainment" amount={calculateTotalExpenses("entertainment")} image={entertainment} />
+          <Boxes color="#29b6f6" comment="Entertainment" amount={calculateTotalExpenses("entertainment")} image={entertainment} />
           <Boxes color="#67e8f9" comment="Others" amount={calculateTotalExpenses("others")} image={leaf} />
         </div>
         <div className="mt-8 flex">
           <div className='ml-36'>
-            <h2 className="text-xl font-bold">Recent Transactions</h2>
+            <h2 className="text-2xl font-bold font-mono">Recent Transactions</h2>
             <table>
               <thead>
                 <tr>
-                  <th className="text-black text-lg px-6 py-3">Purpose</th>
-                  <th className="text-black text-lg px-6 py-3">Category</th>
-                  <th className="text-black text-lg px-6 py-3">Amount</th>
-                  <th className="text-black text-lg px-8 py-3">Date</th>
-                  <th className="text-black text-lg px-8 py-3">Edit/Del</th>
+                  <th className="text-black text-base px-6 py-3">Purpose</th>
+                  <th className="text-black text-base px-6 py-3">Category</th>
+                  <th className="text-black text-base px-6 py-3">Amount</th>
+                  <th className="text-black text-base px-8 py-3">Date</th>
+                  <th className="text-black text-base px-8 py-3">Edit/Del</th>
                 </tr>
               </thead>
 
               <tbody>
-                {transactions.map((transaction) => {
-                  // const category = categories.find((cat) => cat.id === transaction.categoryId);
+                {transactions.map((transaction, index) => {
                   return (
-                    <tr key={transaction.id}>
-                      <td className="text-black text-lg px-6 py-3">{transaction.description}</td>
-                      <td className="text-black text-lg px-6 py-3">{transaction.categoryId}</td>
-                      <td className="text-black text-lg px-6 py-3">{transaction.amount}</td>
-                      <td className="text-black py-3">{formatDate(transaction.date)}</td>
-                      <td className='text-black py-3'>
+                    <tr key={transaction.id} className={index % 2 === 0 ? 'bg-gray-200' : 'bg-zinc-400'}>
+                      <td className="text-black font-serif text-lg px-6 py-3">{transaction.description}</td>
+                      <td className="text-black font-serif text-lg px-6 py-3">{transaction.categoryId}</td>
+                      <td className="text-black font-mono text-lg px-6 py-3">{transaction.amount}</td>
+                      <td className="text-black text-base font-mono py-3">{formatDate(transaction.date)}</td>
+                      <td className='text-black font-mono px-2 py-3'>
                             {/* <Link to={`/update-faculty/${item.faculty_id}`}> */}
-                            <button onClick={() => editTransaction(transaction.id)} className="font-inter font-bold bg-green-300 text-black px-4 py-2 rounded-md">Edit</button>
+                            <button onClick={() => editTransaction(transaction.id)} className="font-inter font-bold bg-cyan-200 text-black px-4 py-2 rounded-md">Edit</button>
                             &nbsp; 
                             {/* </Link>  */}
                             <button onClick={() => delTransaction(transaction.id)} className="font-inter font-bold bg-red-500 text-black px-4 py-2 rounded-md" >Del</button> 
@@ -113,7 +113,6 @@ const Home = ({ username, email, id }) => {
             </table>
           </div>
           <div className='ml-10 justify-center items-center'>
-            {/* Pass the editingTransaction to the Expenditure component */}
             <Expenditure id={id} editingTransaction={editingTransaction} />
           </div>
           

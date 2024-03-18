@@ -10,7 +10,6 @@ const Expenditure = ({ id, editingTransaction }) => {
     date: ''
   });
 
-  // Update formData whenever editingTransaction changes
   useEffect(() => {
     if (editingTransaction) {
       setFormData({
@@ -64,9 +63,9 @@ const Expenditure = ({ id, editingTransaction }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold">Expenditure</h2>
+      <h2 className="text-2xl font-mono font-bold mb-4">Expenditure</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="purpose" className="block text-gray-700 font-bold mb-2">
+        <label htmlFor="purpose" className="block text-lg text-gray-700 font-bold font-mono mb-2">
           Purpose
         </label>
         <input
@@ -75,10 +74,10 @@ const Expenditure = ({ id, editingTransaction }) => {
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="border rounded w-full py-2 px-3 text-xl mb-2 text-gray-700 font-sans leading-tight focus:outline-none focus:shadow-outline"
         />
 
-        <label htmlFor="amount" className="block text-gray-700 font-bold mb-2">
+        <label htmlFor="amount" className="block text-lg text-gray-700 font-bold font-mono mb-2">
           Amount
         </label>
         <input
@@ -87,10 +86,10 @@ const Expenditure = ({ id, editingTransaction }) => {
           name="amount"
           value={formData.amount}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-xl mb-2 text-gray-700 font-sans leading-tight focus:outline-none focus:shadow-outline"
         />
 
-        <label htmlFor="category" className="block text-gray-700 font-bold mb-2">
+        <label htmlFor="category" className="block text-lg text-gray-700 font-bold font-mono mb-2">
           Category
         </label>
         <select
@@ -98,7 +97,7 @@ const Expenditure = ({ id, editingTransaction }) => {
           name="categoryId"
           value={formData.categoryId}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-xl mb-2 text-gray-700 font-sans leading-tight focus:outline-none focus:shadow-outline"
         >
           <option value="food">Food</option>
           <option value="shopping">Shopping</option>
@@ -108,7 +107,7 @@ const Expenditure = ({ id, editingTransaction }) => {
           <option value="others">Others</option>
         </select>
 
-        <label htmlFor="date" className='block text-gray-700 font-bold mb-2'>
+        <label htmlFor="date" className='block text-lg text-gray-700 font-bold font-mono mb-2'>
           Date
         </label>
         <input
@@ -117,14 +116,14 @@ const Expenditure = ({ id, editingTransaction }) => {
           name="date"
           value={formData.date}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-xl mb-2 text-gray-700 font-sans leading-tight focus:outline-none focus:shadow-outline"
         />
 
         <button
           type="submit"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
-          {editingTransaction ? 'Update' : 'Submit'}
+          {editingTransaction ? 'Update' : 'Add'}
         </button>
       </form>
     </div>

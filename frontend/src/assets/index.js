@@ -7,8 +7,15 @@ import leaf from "./leaf.png";
 import shopping from "./shopping.png"; 
 import entertainment from "./entertainment.png"; 
 import doctor from "./doctor.png"; 
+import analysis from "./analysis.png"; 
+import home from "./home.png"; 
+import settings from "./settings.png"; 
+import tree from "./tree.png"; 
 
 export {
+    settings,
+    analysis,
+    home,
     budget,
     imgUser,
     cash,
@@ -17,5 +24,6 @@ export {
     leaf,
     shopping, 
     entertainment, 
-    doctor
+    doctor,
+    tree
 };

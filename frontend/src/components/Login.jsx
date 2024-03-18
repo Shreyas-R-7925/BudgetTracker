@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const Login = ({ handleLogin, handleUsernameChange, handlePasswordChange, signup }) => {
   return (
     <div className="max-w-md w-full">
-      <h2 className="text-3xl font-bold mb-4">Login</h2>
+      <h2 className="text-3xl font-bold font-mono mt-4 mb-4">Login</h2>
       <form onSubmit={handleLogin}>
         <div className="mb-4">
           <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
@@ -31,7 +31,7 @@ const Login = ({ handleLogin, handleUsernameChange, handlePasswordChange, signup
         </div>
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-green-300 hover:bg-blue-700 font-mono text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
           Log In
         </button>
@@ -39,7 +39,7 @@ const Login = ({ handleLogin, handleUsernameChange, handlePasswordChange, signup
         <button
           onClick={signup}
           type="button"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-amber-500 ml-4 font-mono hover:bg-blue-700 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
           Sign Up
         </button>

@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home, Report, Settings } from './pages';
-import { Login } from './components'; // Import the Login component
+import { Login } from './components'; 
 import { budget } from './assets';
 
 import axios from 'axios';
 
 const App = () => {
-
-  const [id, setId] = useState('');
-  const [username, setUsername] = useState('');
+  const [id, setId] = useState(localStorage.getItem('userId') || '');
+  const [username, setUsername] = useState(localStorage.getItem('username') || '');
   const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(localStorage.getItem('email') || '');
 
   const [authenticated, setAuthenticated] = useState(false);
-  const [signingUp, setSigningUp] = useState(false); 
-
-  const [error, setError] = useState('');  // not required check once
-
+  const [signingUp, setSigningUp] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const isAuthenticated = localStorage.getItem('authenticated');
@@ -26,24 +23,19 @@ const App = () => {
     }
   }, []);
 
-  const [data, setData] = useState([]); 
- 
-  const loadData = async () => {
-      const response = await axios.get("http://localhost:8080/user");
-      setData(response.data); 
-  } 
-
-  useEffect(() => {
-      loadData(); 
-  }, []); 
-
   useEffect(() => {
     if (authenticated) {
       localStorage.setItem('authenticated', 'true');
+      localStorage.setItem('userId', id);
+      localStorage.setItem('username', username);
+      localStorage.setItem('email', email);
     } else {
       localStorage.removeItem('authenticated');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('username');
+      localStorage.removeItem('email');
     }
-  }, [authenticated]);
+  }, [authenticated, id, username, email]);
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -61,7 +53,6 @@ const App = () => {
     setSigningUp(true);
   };
 
-  
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
@@ -83,46 +74,46 @@ const App = () => {
     }
   };
 
-  
-
   const handleLogin = async (e) => {
-      e.preventDefault();
-      
-      try {
-          const response = await axios.get("http://localhost:8080/user");
-          const users = response.data;
-          
-          // Find user by username
-          const user = users.find(user => user.username === username);
+    e.preventDefault();
 
-          if (!user) {
-              setError('User not found');
-              console.log('User not found');
-              return;
-          }
+    try {
+      const response = await axios.get("http://localhost:8080/user");
+      const users = response.data;
 
-          if (user.password === password) {
-            // Authentication successful
-            console.log('Authentication successful');
-            setId(user.id)
-            setEmail(user.email)
-            console.log('User email:', user.email); // Log user's email
-            console.log('User id:', user.id); 
-            setAuthenticated(true);
-          } 
-          else {
-            setError('Invalid password');
-            console.log("Invalid password");
-          }
-      } 
-      catch (error) {
-          console.error('Error fetching user data:', error);
-          setError('Error fetching user data');
+      // Find user by username
+      const user = users.find(user => user.username === username);
+
+      if (!user) {
+        setError('User not found');
+        console.log('User not found');
+        return;
       }
+
+      if (user.password === password) {
+        // Authentication successful
+        console.log('Authentication successful');
+        setId(user.id)
+        setEmail(user.email)
+        console.log('User email:', user.email); // Log user's email
+        console.log('User id:', user.id);
+        setAuthenticated(true);
+      } else {
+        setError('Invalid password');
+        console.log("Invalid password");
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setError('Error fetching user data');
+    }
   };
 
   const handleLogout = () => {
     setAuthenticated(false);
+    setPassword('');
+    setUsername(''); 
+    setEmail('');
+    setId('');
   };
 
   return (
@@ -130,7 +121,7 @@ const App = () => {
       <div>
         {!authenticated && (
           <div className='flex flex-col items-center justify-center'>
-            <img src={budget} alt="Your Image" className="max-w-xl rounded-lg" />
+            <img src={budget} alt="Your Image" className="w-52 h-48 mt-10 rounded-full" />
           </div>
         )}
         <div className="flex flex-col items-center justify-center">
@@ -144,7 +135,7 @@ const App = () => {
           )}
           {!authenticated && signingUp && (
             <div className="max-w-md w-full">
-              <h2 className="text-3xl font-bold mb-4">Sign Up</h2>
+              <h2 className="text-3xl font-bold mb-4 font-mono">Sign Up</h2>
               <form onSubmit={handleSignUp}>
                 <div className="mb-4">
                   <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
@@ -182,9 +173,10 @@ const App = () => {
                     onChange={handlePasswordChange}
                   />
                 </div>
+              
                 <button
                   type="submit"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="bg-amber-500 font-mono hover:bg-blue-700 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                   Sign Up
                 </button>
@@ -196,9 +188,9 @@ const App = () => {
               <button className="absolute top-1 right-1 h-16 w-16 rounded-full bg-red-400 hover:bg-red-100 font-bold text-sm" onClick={handleLogout}>Logout</button>
               <main className="sm:p-8 px-4 py-8 w-full min-h-[calc(100vh-73px)]">
                 <Routes>
-                  <Route path="/" element={<Home username={username} email={email} id = {id}/>} />
-                  <Route path="/report" element={<Report username={username} id={id}/>} />
-                  <Route path="/settings" element={<Settings username={username} id={id}/>} />
+                  <Route path="/" element={<Home username={username} email={email} id={id} />} />
+                  <Route path="/report" element={<Report username={username} id={id} />} />
+                  <Route path="/settings" element={<Settings username={username} id={id} />} />
                 </Routes>
               </main>
             </div>

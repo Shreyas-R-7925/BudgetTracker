@@ -1,75 +1,134 @@
-import React, {useState} from 'react' 
-import { VerticalNavbar } from '../components'
+import React, { useState, useEffect } from 'react';
+import { VerticalNavbar } from '../components';
+import axios from 'axios';
 
-const Settings = ({username, id}) => {
-  console.log("in settings page",id); 
+const Settings = ({ username, id }) => {
+  // console.log("in settings page", id);
 
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [apiPassword, setApiPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    // Fetch user's password from API when component mounts
+    axios.get(`http://localhost:8080/user/${id}`)
+      .then(response => {
+        console.log("Password response:", response.data);
+        console.log(typeof response.data); 
+        // setApiPassword(response.data);
+        setApiPassword(response.data.toString());
 
-  } 
+      })
+      .catch(error => {
+        console.error('Error fetching password:', error);
+        setError('Error fetching password');
+      });
+  }, [id]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    console.log("current password", input.currentPassword); 
+    console.log("new password", input.newPassword);
+    console.log("apiPassword", apiPassword);
+    // Check if current password matches the one fetched from the API
+    if (input.currentPassword !== apiPassword) {
+      setError('Current password is incorrect');
+      return;
+    }
+  
+    // Check if new password and confirm password match
+    if (input.newPassword !== input.confirmPassword) {
+      setError('New password and confirm password do not match');
+      return;
+    }
+  
+    // If all checks pass, update the password
+    axios.put(`http://localhost:8080/user/${id}/change-password`, { newPassword: input.newPassword })
+      .then(response => {
+        console.log('Password changed successfully:', response.data);
+        setError('');
+        // Clear input fields
+        setInput({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+      })
+      .catch(error => {
+        console.error('Error changing password:', error);
+        setError('Error changing password');
+      });
+  };
+  
 
   const handleChange = (e) => {
-    setInput(e.target.value);
-    console.log("Im",input,"here");
-  }
+    setInput({
+      ...input,
+      [e.target.name]: e.target.value
+    });
+  };
 
   return (
     <div>
-      <h1 className='ml-20 text-center text-2xl font-bold'>Settings</h1>
-      <VerticalNavbar username={username} />  
+      <h1 className='ml-20 text-center mt-4 ml-24 text-2xl font-bold font-mono'>Settings</h1>
+      <VerticalNavbar username={username} />
 
-      <div className='mt-16 ml-32 border rounded px-10 py-10 bg-blue-100'>
+      <h4 className='text-center mt-8 ml-24 text-2xl font-mono'>Change Password</h4>
+      <div className='mt-0 ml-32 border rounded px-10 py-10 bg-sky-100'>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
-            New Username
+          <label htmlFor="currentPassword" className="block text-gray-700 font-bold mb-2">
+            Current Password
           </label>
           <input
-            type="text"
-            id="username"
-            name="username"
-            value={input.username}
-            onChange={handleChange}
-            className="shadow appearance-none border mb-3 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-
-          <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
-            New Email
-          </label>
-          <input
-            type="text"
-            id="email"
-            name="email"
-            value={input.email}
+            type="password"
+            id="currentPassword"
+            name="currentPassword"
+            value={input.currentPassword}
             onChange={handleChange}
             className="shadow appearance-none border rounded w-full mb-3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
 
-          <label htmlFor="username" className="block text-gray-700 font-bold mb-2">
+          <label htmlFor="newPassword" className="block text-gray-700 font-bold mb-2">
             New Password
           </label>
           <input
-            type="text"
-            id="password"
-            name="password"
-            value={input.password}
+            type="password"
+            id="newPassword"
+            name="newPassword"
+            value={input.newPassword}
             onChange={handleChange}
             className="shadow appearance-none border rounded w-full mb-3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          /> 
+          />
 
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 w-22 h-10 rounded focus:outline-none focus:shadow-outline"
-        >
-          Update
-        </button>
+          <label htmlFor="confirmPassword" className="block text-gray-700 font-bold mb-2">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={input.confirmPassword}
+            onChange={handleChange}
+            className="shadow appearance-none border rounded w-full mb-3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
 
+          {error && <p className="text-red-500">{error}</p>}
+
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 py-2 px-4 w-22 h-10 rounded focus:outline-none focus:shadow-outline"
+          >
+            Update
+          </button>
         </form>
-      </div>  
-      
+      </div>
     </div>
-  )
+  );
 }
 
-export default Settings 
+export default Settings;
