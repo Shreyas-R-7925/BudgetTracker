@@ -10,6 +10,7 @@ const Expenditure = ({ id, editingTransaction }) => {
     date: ''
   });
 
+  console.log("in expenditure component ", id);
   useEffect(() => {
     if (editingTransaction) {
       setFormData({

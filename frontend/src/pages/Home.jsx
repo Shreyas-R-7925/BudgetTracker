@@ -12,10 +12,19 @@ const Home = ({ username, email, id }) => {
   const [amount, setAmount] = useState([]);
   const [categories, setCategories] = useState([]);
   const [editingTransaction, setEditingTransaction] = useState(null);
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!id) {
+          const response = await axios.get("http://localhost:8080/user");
+          const users = response.data;
+          const user = users.find(user => user.username === username);
+          const id = user.id;
+          setUserId(id);
+        }
+
         const transactionsResponse = await axios.get('http://localhost:8080/transactions');
         const categoriesResponse = await axios.get('http://localhost:8080/categories');
 

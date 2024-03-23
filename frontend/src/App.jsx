@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, Report, Settings } from './pages';
+import { Home, Report, Settings, Goal } from './pages';
 import { Login } from './components'; 
 import { budget } from './assets';
 
@@ -63,10 +63,19 @@ const App = () => {
       });
       if (response.status === 201) {
         console.log("Sign-up successful");
-        setEmail(email);
-        setUsername(username);
-        setId(id);
+        const usersResponse = await axios.get("http://localhost:8080/user");
+      const users = usersResponse.data;
+
+      // Find the newly signed up user
+      const newUser = users.find(user => user.username === username && user.email === email);
+
+      if (newUser) {
+        console.log("in app.jsx my newuser id is ",newUser.id);
+        setId(newUser.id);
+        setEmail(newUser.email);
+        setUsername(newUser.username);
         setAuthenticated(true);
+      }
       }
     } catch (error) {
       console.error("Error signing up:", error);
@@ -190,6 +199,7 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<Home username={username} email={email} id={id} />} />
                   <Route path="/report" element={<Report username={username} id={id} />} />
+                  <Route path="/goal" element={<Goal username={username} id={id} />} />
                   <Route path="/settings" element={<Settings username={username} id={id} />} />
                 </Routes>
               </main>

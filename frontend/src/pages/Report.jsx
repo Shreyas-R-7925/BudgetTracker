@@ -93,7 +93,7 @@ const Report = ({ username, id }) => {
 
   return (
     <div className='flex flex-col'>
-      <h1 className='ml-20 text-center text-2xl font-bold font-mono'>Analysis</h1>
+      <h1 className='ml-20 text-center text-2xl font-bold font-mono'>Report</h1>
       <VerticalNavbar username={username} />
 
       <div className="ml-40 mt-14 flex flex-wrap">
