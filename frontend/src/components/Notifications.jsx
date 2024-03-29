@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 
-const Notifications = ({id}) => {
+import { toast } from 'react-toastify'; 
+
+const Notifications = ({username, id}) => {
 
   const [transactions, setTransactions] = useState([]); 
 
@@ -52,11 +54,15 @@ const Notifications = ({id}) => {
   const goalAchieved = (tarAmt, expenses) =>{ 
     console.log("this is taramt",tarAmt);
     console.log("this is expensee ", expenses);
-    if(tarAmt <= expenses){
-      return <h1>Good</h1>
+
+    if(expenses == 0){
+      return <h1>&nbsp; &nbsp; &nbsp; &nbsp;-----------------&nbsp; &nbsp; &nbsp; &nbsp;</h1>
+    }
+    else if(expenses > tarAmt){
+      return <h1>Expenses out of control.</h1>
     }
     else{
-      return <h1>Not achieved the target</h1>
+      return <h1>Goal achievable.</h1>
     }
   } 
   
@@ -74,27 +80,41 @@ const Notifications = ({id}) => {
     };
 
     fetchData();
-  }, [id]); 
+  }, [id]);  
+
+  const delTarget = async (targetId) => {
+    try {
+      await axios.delete(`http://localhost:8080/target/${targetId}`);
+      setTargetData(prevTargets => prevTargets.filter(target => target.id !== targetId));
+      toast.success("Target deleted successfully!");
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+    }
+  };
+  
   
   return (
-    <div className="notification">
-      <h2>Targets</h2>
+    <div>
+      <h2 className='align-items text-center justify-between font-bold font-mono text-2xl ml-10 mb-6'>Targets</h2>
       <table>
         <thead>
           <tr>
-            <th>Target Amount</th>
-            <th>Expenses</th>
-            <th>Date</th>
-            <th>Message</th>
+            <th className='px-12'>Goal</th>
+            <th className='px-12'>Expenses</th>
+            <th className='px-12'>Date</th>
+            <th className='px-12'>Message</th>
           </tr>
         </thead>
         <tbody>
-          {targetData && targetData.map((target) => (
-            <tr key={target._id}>
-              <td>{target.targetAmount}</td>
-              <td>{grandTotal(target.date)}</td>
-              <td>{formatDate(target.date)}</td>
-              <td>{goalAchieved(target.targetAmount, grandTotal(target.date))}</td>
+          {targetData && targetData.map((target, index) => (
+            <tr key={target._id} className={index % 2 === 0 ? 'bg-gray-200' : 'bg-zinc-400'}>
+              <td className='px-6 py-3'>{target.targetAmount}</td>
+              <td className='px-6 py-3'>{grandTotal(target.date)}</td>
+              <td className='px-6 py-3'>{formatDate(target.date)}</td>
+              <td className='px-6 py-3'>{goalAchieved(target.targetAmount, grandTotal(target.date))}</td>
+              <td className='px-6 py-3'>
+                <button onClick={() => delTarget(target.id)} className="font-inter font-bold bg-red-500 text-black px-4 py-2 rounded-md" >Del</button> 
+              </td>
             </tr>
           ))}
         </tbody>

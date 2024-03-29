@@ -3,6 +3,8 @@ import { Boxes, VerticalNavbar, Expenditure } from '../components';
 import { food, bill, shopping, leaf, entertainment, doctor } from '../assets';
 import axios from 'axios';
 
+import { toast } from 'react-toastify';
+
 const Home = ({ username, email, id }) => {
   console.log('in home page username: ', username);
   console.log('in home page email: ', email);
@@ -34,6 +36,7 @@ const Home = ({ username, email, id }) => {
         setTransactions(filteredTransactions);
         setCategories(filteredCategories);
       } catch (error) {
+        toast.error("Error fetching data. Try again later.")
         console.error('Error fetching data:', error);
       }
     };
@@ -59,7 +62,9 @@ const Home = ({ username, email, id }) => {
     try {
       await axios.delete(`http://localhost:8080/transactions/${transactionId}`);
       setTransactions(transactions.filter(transaction => transaction.id !== transactionId));
+      toast.success("Transaction deleted successfully"); 
     } catch (error) {
+      toast.error("Error deleting transaction.");
       console.error('Error deleting transaction:', error);
     }
   };  
@@ -131,4 +136,4 @@ const Home = ({ username, email, id }) => {
   );
 }
 
-export default Home;
+export default Home;    

@@ -15,9 +15,9 @@ const Boxes = ({ color, comment, amount, image }) => {
     // If color is blue, add special properties
     boxStyle = {
       ...boxStyle, // Spread the existing styles
-      width: '300px', // Add width of 500px
-      height: '120px', // Adjust height as needed
-      fontSize: '80px', // Adjust font size as needed
+      width: '350px', // Add width of 500px
+      height: '160px', // Adjust height as needed
+      fontSize: '40px', // Adjust font size as needed
       textAlign: 'center',
       marginTop: '20px', // Center align text
       padding: '20px 10px 20px 10px'

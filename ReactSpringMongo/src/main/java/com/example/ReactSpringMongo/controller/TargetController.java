@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -61,5 +62,19 @@ public class TargetController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(userTargets);
+    }
+
+    @DeleteMapping("/target/{id}")
+    public ResponseEntity deleteTargetById(@PathVariable String id){
+
+        Optional<Target> target = this.targetRepository.findById(id);
+
+        if(target.isPresent()){
+            this.targetRepository.deleteById(id);
+            return ResponseEntity.ok("Deleted Successfully");
+        }
+        else{
+            return ResponseEntity.ok("The target with id: " +id + "was not found.");
+        }
     }
 }

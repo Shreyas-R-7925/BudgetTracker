@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+import { toast } from 'react-toastify';
+
 const Expenditure = ({ id, editingTransaction }) => {
   const [formData, setFormData] = useState({
     userId: id,
@@ -43,10 +45,12 @@ const Expenditure = ({ id, editingTransaction }) => {
       if (editingTransaction) {
         // If editingTransaction exists, update the transaction
         await axios.put(`http://localhost:8080/transactions/${editingTransaction.id}`, formData);
+        toast.success("Transaction updated successfully"); 
         console.log('Transaction updated successfully');
       } else {
         // Otherwise, add a new transaction
-        await axios.post('http://localhost:8080/transactions', formData);
+        await axios.post('http://localhost:8080/transactions', formData); 
+        toast.success("Transaction added successfully");
         console.log('Transaction added successfully');
       }
       // Reset form data after successful submission
@@ -58,6 +62,7 @@ const Expenditure = ({ id, editingTransaction }) => {
         date: ''
       });
     } catch (error) {
+      toast.error("Please fill out all fields!!")
       console.error('Error submitting transaction:', error);
     }
   };
@@ -117,6 +122,7 @@ const Expenditure = ({ id, editingTransaction }) => {
           name="date"
           value={formData.date}
           onChange={handleChange}
+          placeholder='dd-mm-yyyy'
           className="shadow appearance-none border rounded w-full py-2 px-3 text-xl mb-2 text-gray-700 font-sans leading-tight focus:outline-none focus:shadow-outline"
         />
 

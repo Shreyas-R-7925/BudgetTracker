@@ -3,6 +3,8 @@ import axios from 'axios';
 import { VerticalNavbar, Boxes } from '../components';
 import { food, bill, cash, shopping, leaf, entertainment, doctor } from '../assets';
 
+import { toast } from 'react-toastify';
+
 const Report = ({ username, id }) => {
   console.log("in report page", id);
 
@@ -20,6 +22,8 @@ const Report = ({ username, id }) => {
         const filteredTransactions = transactionsResponse.data.filter(transaction => transaction.userId === id);
         setTransactions(filteredTransactions);
       } catch (error) {
+    
+        toast.error("Search by mm-yyyy");
         console.error('Error fetching data:', error);
       }
     };

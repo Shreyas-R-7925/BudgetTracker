@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { VerticalNavbar } from '../components';
 import axios from 'axios';
 
+import { toast } from 'react-toastify';
+
 const Settings = ({ username, id }) => {
   // console.log("in settings page", id);
 
@@ -11,7 +13,6 @@ const Settings = ({ username, id }) => {
     confirmPassword: ''
   });
   const [apiPassword, setApiPassword] = useState('');
-  const [error, setError] = useState('');
 
   useEffect(() => {
     // Fetch user's password from API when component mounts
@@ -25,7 +26,7 @@ const Settings = ({ username, id }) => {
       })
       .catch(error => {
         console.error('Error fetching password:', error);
-        setError('Error fetching password');
+        toast.error("Error fetching password"); 
       });
   }, [id]);
 
@@ -37,13 +38,19 @@ const Settings = ({ username, id }) => {
     console.log("apiPassword", apiPassword);
     // Check if current password matches the one fetched from the API
     if (input.currentPassword !== apiPassword) {
-      setError('Current password is incorrect');
+      toast.error("Current password is incorrect");
+      return;
+    } 
+
+    if(input.newPassword === "" || input.confirmPassword === ""){
+      toast.error("Enter new password");
       return;
     }
   
     // Check if new password and confirm password match
     if (input.newPassword !== input.confirmPassword) {
       setError('New password and confirm password do not match');
+      toast.error("New password doesn't match confirm password");
       return;
     }
   
@@ -51,7 +58,7 @@ const Settings = ({ username, id }) => {
     axios.put(`http://localhost:8080/user/${id}/change-password`, { newPassword: input.newPassword })
       .then(response => {
         console.log('Password changed successfully:', response.data);
-        setError('');
+        toast.success("Updated Password successfully");
         // Clear input fields
         setInput({
           currentPassword: '',
@@ -61,7 +68,6 @@ const Settings = ({ username, id }) => {
       })
       .catch(error => {
         console.error('Error changing password:', error);
-        setError('Error changing password');
       });
   };
   
@@ -116,8 +122,6 @@ const Settings = ({ username, id }) => {
             onChange={handleChange}
             className="shadow appearance-none border rounded w-full mb-3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
-
-          {error && <p className="text-red-500">{error}</p>}
 
           <button
             type="submit"

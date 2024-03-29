@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, Report, Settings, Goal } from './pages';
-import { Login } from './components'; 
+import { Home, Report, Settings, Goal, Targets } from './pages';
+import { Login, Notifications } from './components'; 
 import { budget } from './assets';
+import {ToastContainer} from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify'; 
 
 import axios from 'axios';
 
@@ -61,7 +64,8 @@ const App = () => {
         email: email,
         password: password
       });
-      if (response.status === 201) {
+      if (response.status === 201) { 
+        toast.success("Signed up successfully!");
         console.log("Sign-up successful");
         const usersResponse = await axios.get("http://localhost:8080/user");
       const users = usersResponse.data;
@@ -78,6 +82,7 @@ const App = () => {
       }
       }
     } catch (error) {
+      toast.error("Fill out all fields.");
       console.error("Error signing up:", error);
       setError("Error signing up. Please try again.");
     }
@@ -102,6 +107,7 @@ const App = () => {
       if (user.password === password) {
         // Authentication successful
         console.log('Authentication successful');
+        toast.success("Welcome!");
         setId(user.id)
         setEmail(user.email)
         console.log('User email:', user.email); // Log user's email
@@ -109,10 +115,12 @@ const App = () => {
         setAuthenticated(true);
       } else {
         setError('Invalid password');
+        toast.error("Invalid password");
         console.log("Invalid password");
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
+      toast.error("Error fetching user data");
       setError('Error fetching user data');
     }
   };
@@ -123,6 +131,7 @@ const App = () => {
     setUsername(''); 
     setEmail('');
     setId('');
+    toast.success("Logged out successfully");
   };
 
   return (
@@ -192,6 +201,7 @@ const App = () => {
               </form>
             </div>
           )}
+          <ToastContainer position="bottom-right" />
           {authenticated && (
             <div>
               <button className="absolute top-1 right-1 h-16 w-16 rounded-full bg-red-400 hover:bg-red-100 font-bold text-sm" onClick={handleLogout}>Logout</button>
@@ -201,6 +211,7 @@ const App = () => {
                   <Route path="/report" element={<Report username={username} id={id} />} />
                   <Route path="/goal" element={<Goal username={username} id={id} />} />
                   <Route path="/settings" element={<Settings username={username} id={id} />} />
+                  <Route path="/targets" element={<Targets username={username} id={id} />} />
                 </Routes>
               </main>
             </div>
